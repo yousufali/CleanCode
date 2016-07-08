@@ -10,7 +10,7 @@ namespace MBE.Domain.Elections
 {
     public interface INonLifeImputedIncomeCalculator
     {
-        TierAfterTaxAndImputedIncome GetImputedIncomeMonthly(SelectedPlanAndTier setupData);
+        decimal GetImputedIncomeMonthly(SelectedPlanAndTier setupData);
     }
     public class NonLifeImputedIncomeCalculator
     {
@@ -20,9 +20,9 @@ namespace MBE.Domain.Elections
         {
             m_tierRepository = tierRepository;
         }
-        public TierAfterTaxAndImputedIncome GetImputedIncomeMonthly(SelectedPlanAndTier setupData, List<CoveredDependent> coveredDependents)
+        public decimal GetImputedIncomeMonthly(SelectedPlanAndTier setupData, List<CoveredDependent> coveredDependents)
         {
-
+            return 0;
         }
         private bool IsMinimumChildrenCoveredConditionSatisfied(TierAfterTaxAndImputedIncome t)
         {
@@ -50,7 +50,7 @@ namespace MBE.Domain.Elections
 
         private bool IsSpouseEquivalentCoveredConditionSatisfied(TierAfterTaxAndImputedIncome t)
         {
-            if (t.MaxDPChildrenCovered >= TotalDomesticPartnerChildrenCovered()) return true;
+            if (t.SpouseEquivalentQualifiedCount >= TotalDomesticPartnerChildrenCovered()) return true;
             return false;
         }
 

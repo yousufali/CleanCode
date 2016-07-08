@@ -60,6 +60,7 @@
     <Compile Include="PremiumOverrideCalculatorTests.fs" />
     <Compile Include="PremiumOverrideWithAdminFeeCalculatorTests.fs" />
     <Compile Include="BenefitElectionAdminFeeCalculatorTests.fs" />
+    <Compile Include="TierAfterTaxAndImputedIncomeSelectorTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">

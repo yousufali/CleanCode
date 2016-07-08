@@ -49,7 +49,9 @@
     <Compile Include="Models\BenefitElectionAdminFee.cs" />
     <Compile Include="Models\ClientBenefitPlan.cs" />
     <Compile Include="Models\ClientPlanOrder.cs" />
+    <Compile Include="Models\CoveredDependent.cs" />
     <Compile Include="Models\ElectionParameter.cs" />
+    <Compile Include="Models\Relation.cs" />
     <Compile Include="Models\SelectedPlanAndTier.cs" />
     <Compile Include="Models\TierAfterTaxAndImputedIncome.cs" />
     <Compile Include="Models\TierAmountFields.cs" />
@@ -58,6 +60,7 @@
     <Compile Include="PremiumOverrideCalculator.cs" />
     <Compile Include="PremiumOverrideWithAdminFeeCalculator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TierAfterTaxAndImputedIncomeSelector.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
