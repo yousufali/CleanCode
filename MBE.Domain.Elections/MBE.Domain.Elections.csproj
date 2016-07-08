@@ -49,8 +49,10 @@
     <Compile Include="Models\BenefitElectionAdminFee.cs" />
     <Compile Include="Models\ClientBenefitPlan.cs" />
     <Compile Include="Models\ClientPlanOrder.cs" />
+    <Compile Include="Models\CoverageAmountForImputedIncomeCalculation.cs" />
     <Compile Include="Models\CoveredDependent.cs" />
     <Compile Include="Models\ElectionParameter.cs" />
+    <Compile Include="Models\ImputedIncomeDateRange.cs" />
     <Compile Include="Models\Relation.cs" />
     <Compile Include="Models\SelectedPlanAndTier.cs" />
     <Compile Include="Models\TierAfterTaxAndImputedIncome.cs" />
