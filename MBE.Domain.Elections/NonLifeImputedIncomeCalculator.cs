@@ -15,52 +15,17 @@ namespace MBE.Domain.Elections
     public class NonLifeImputedIncomeCalculator
     {
         private ITierRepository m_tierRepository;
-        private List<CoveredDependent> m_coveredDependents;
-        public NonLifeImputedIncomeCalculator(ITierRepository tierRepository)
+        private ITierAfterTaxAndImputedIncomeSelector m_tierAfterTaxAndImputedIncomeSelector;
+        public NonLifeImputedIncomeCalculator(ITierRepository tierRepository, ITierAfterTaxAndImputedIncomeSelector tierAfterTaxAndImputedIncomeSelector)
         {
             m_tierRepository = tierRepository;
+            m_tierAfterTaxAndImputedIncomeSelector = tierAfterTaxAndImputedIncomeSelector;
         }
         public decimal GetImputedIncomeMonthly(SelectedPlanAndTier setupData, List<CoveredDependent> coveredDependents)
         {
-            return 0;
-        }
-        private bool IsMinimumChildrenCoveredConditionSatisfied(TierAfterTaxAndImputedIncome t)
-        {
-            if (t.MinChildrenCovered <= TotalChildrenCovered()) return true;
-            return false;
-        }
-
-        private bool IsMaximumChildrenCoveredConditionSatisfied(TierAfterTaxAndImputedIncome t)
-        {
-            if (t.MaxChildrenCovered >= TotalChildrenCovered()) return true;
-            return false;
-        }
-
-        private bool IsMinimumDomesticPartnerChildrenCoveredConditionSatisfied(TierAfterTaxAndImputedIncome t)
-        {
-            if (t.MinDPChildrenCovered <= TotalDomesticPartnerChildrenCovered()) return true;
-            return false;
-        }
-
-        private bool IsMaximumDomesticPartnerChildrenCoveredConditionSatisfied(TierAfterTaxAndImputedIncome t)
-        {
-            if (t.MaxDPChildrenCovered >= TotalDomesticPartnerChildrenCovered()) return true;
-            return false;
-        }
-
-        private bool IsSpouseEquivalentCoveredConditionSatisfied(TierAfterTaxAndImputedIncome t)
-        {
-            if (t.SpouseEquivalentQualifiedCount >= TotalDomesticPartnerChildrenCovered()) return true;
-            return false;
-        }
-
-        private int TotalChildrenCovered()
-        {
-            return m_coveredDependents.FindAll(a => (a.RelationID == (int)Relation.Child) || (a.RelationID == (int)Relation.CourtOrderedDependent)).Count;
-        }
-        private int TotalDomesticPartnerChildrenCovered()
-        {
-            return m_coveredDependents.FindAll(a => (a.RelationID == (int)Relation.ChildofDomesticPartner)).Count;
+            var tierAfterTaxAndImputedIncomeList = m_tierRepository.GetTierAfterTaxAmdImputedIncome(setupData.Tier.TierID, setupData.AgeBanding);
+            var tierAfterTaxAndImputedIncome = m_tierAfterTaxAndImputedIncomeSelector.GetEligibleRecord(tierAfterTaxAndImputedIncomeList, coveredDependents);
+            return tierAfterTaxAndImputedIncome.ImputedIncome;
         }
     }
 }

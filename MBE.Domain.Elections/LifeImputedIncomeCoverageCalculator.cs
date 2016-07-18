@@ -10,7 +10,7 @@ namespace MBE.Domain.Elections
     }
     public class LifeImputedIncomeCoverageCalculator : ILifeImputedIncomeCoverageCalculator
     {
-        private decimal MinimumCoverageWithoutImputedIncome;
+        private const decimal MinimumCoverageWithoutImputedIncome = 50000;
 
         public decimal GetImputedIncomeCoverage(List<CoverageAmountForImputedIncomeCalculation> coverageAmounts)
         {
@@ -27,8 +27,5 @@ namespace MBE.Domain.Elections
                 return totalCoverage - MinimumCoverageWithoutImputedIncome;
             }
         }
-
-    }
-
-   
+    }   
 }

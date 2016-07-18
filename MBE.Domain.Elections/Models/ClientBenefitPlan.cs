@@ -10,5 +10,7 @@ namespace MBE.Domain.Elections.Models
     {
         public int PlanID { get; set; }
         public bool AgeBanding { get; set; }
+        public int AlternateIDRuleID { get; set; }
+        public int AlternateIDRuleID2 { get; set; }
     }
 }

@@ -11,5 +11,8 @@ namespace MBE.Domain.Elections.Models
         public ITierBasicInfo Tier { get; set; }
         public List<AdminFee> AdminFees { get; set; }
         public ClientPlanOrder ClientPlanOrder { get; set; }
+        public List<CoverageAmountForImputedIncomeCalculation> CoverageAmountsForImputedIncome { get; set; }
+        public List<ImputedIncomeCost> ImputedIncomeCosts { get; set; }
+        public User User { get; set; }
     }
 }
