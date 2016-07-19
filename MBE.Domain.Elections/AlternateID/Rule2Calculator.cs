@@ -59,7 +59,7 @@ namespace MBE.Domain.Elections.AlternateID
                                                         && GetAsciiOfFirstCharacter(a.AlternateID) > GetAsciiOfFirstCharacter("B"))
                                                         .OrderBy(a => GetAsciiOfFirstCharacter(a.AlternateID));
             if (alternateIDs.Count() > 0) return CompareWithPreviousCoveredUserAlternateID(alternateIDs.FirstOrDefault().AlternateID);
-            return String.Empty;
+            return m_previousCoveredUserAlternateID;
         }
 
         private string CompareWithPreviousCoveredUserAlternateID(string value)

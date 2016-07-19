@@ -59,7 +59,7 @@ namespace MBE.Domain.Elections.AlternateID
                                                                            && IsNumeric(a.AlternateID) && int.Parse(a.AlternateID) > 1)
                                                         .OrderByDescending(a => int.Parse(a.AlternateID));
             if (alternateIDs.Count() > 0) return CompareWithPreviousCoveredUserAlternateID(alternateIDs.FirstOrDefault().AlternateID);
-            return String.Empty;
+            return m_previousCoveredUserAlternateID;
         }
 
         private string CompareWithPreviousCoveredUserAlternateID(string value)

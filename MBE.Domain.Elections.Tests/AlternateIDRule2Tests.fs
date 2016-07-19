@@ -86,7 +86,7 @@ module AlternateIDRule2Tests =
         Assert.Equal(expected, actual)
 
     [<Fact>]
-    let ``AlternateId Rule 2 Test when enrolled first time by user``() =
+    let ``AlternateId Rule 2 Test when enrolled first time with spouse and 1 child``() =
         let benefitElectionAlternateIDs = [| |] |> List
 
         let coveredUsers = [| new CoveredUser(UserID = 1500, RelationID = 1);
@@ -97,6 +97,25 @@ module AlternateIDRule2Tests =
         let expected = [| new UserAlternateID( UserID = 1500, AlternateID = "A");
                           new UserAlternateID( UserID = 1501, AlternateID = "B");
                           new UserAlternateID( UserID = 1503, AlternateID = "C") |]
+        let actual = rule2Calculator.GetAlternateID(benefitElectionAlternateIDs, coveredUsers, DateTime.Parse "1/1/2016")
+
+        Assert.Equal(expected, actual)
+
+
+    [<Fact>]
+    let ``AlternateId Rule 2 Test when enrolled first time with spouse and 2 children``() =
+        let benefitElectionAlternateIDs = [| |] |> List
+
+        let coveredUsers = [| new CoveredUser(UserID = 1500, RelationID = 1);
+                              new CoveredUser(UserID = 1501, RelationID = 2);
+                              new CoveredUser(UserID = 1503, RelationID = 8);
+                              new CoveredUser(UserID = 1504, RelationID = 8); |] |> List
+        let rule2Calculator = new Rule2Calculator();
+
+        let expected = [| new UserAlternateID( UserID = 1500, AlternateID = "A");
+                          new UserAlternateID( UserID = 1501, AlternateID = "B");
+                          new UserAlternateID( UserID = 1503, AlternateID = "C");
+                          new UserAlternateID( UserID = 1504, AlternateID = "D") |]
         let actual = rule2Calculator.GetAlternateID(benefitElectionAlternateIDs, coveredUsers, DateTime.Parse "1/1/2016")
 
         Assert.Equal(expected, actual)

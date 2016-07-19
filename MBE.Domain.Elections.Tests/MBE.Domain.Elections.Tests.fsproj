@@ -66,6 +66,10 @@
     <Compile Include="AlternateIDRule1Tests.fs" />
     <Compile Include="AlternateIDRule2Tests.fs" />
     <Compile Include="AlternateIDRule3Tests.fs" />
+    <Compile Include="AlternateIDRule4Tests.fs" />
+    <Compile Include="AltermateIDRule5Tests.fs" />
+    <Compile Include="AlternateIDRule6Tests.fs" />
+    <Compile Include="AlternateIDRule7Tests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">
