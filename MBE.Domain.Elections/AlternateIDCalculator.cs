@@ -11,24 +11,33 @@ namespace MBE.Domain.Elections
 {
     public interface IAlternateIDCalculator
     {
-
+        List<UserAlternateID> GetAlternateID(List<CoveredUser> coveredUsers, DateTime effectiveDate, int ruleID, int planTypeID, int parentUserID, AlternateIDTypes alternateIDType);
     }
 
-    public class AlternateIDCalculator
+    public class AlternateIDCalculator : IAlternateIDCalculator
     {
         private IPlanRepository m_planRepository;
         private IBenefitElectionAlternateIDSelector m_benefitElectionAlternateIDSelector;
-        private IRule1Calculator m_rule1Calculator;
-        private IRule2Calculator m_rule2Calculator;
-        private IRule3Calculator m_rule3Calculator;
-        private IRule4Calculator m_rule4Calculator;
-        private IRule5Calculator m_rule5Calculator;
-        private IRule6Calculator m_rule6Calculator;
-        private IRule7Calculator m_rule7Calculator;
-        public AlternateIDCalculator(IPlanRepository planRepository, IBenefitElectionAlternateIDSelector benefitElectionAlternateIDSelector)
+        private readonly IRule1Calculator m_rule1Calculator;
+        private readonly IRule2Calculator m_rule2Calculator;
+        private readonly IRule3Calculator m_rule3Calculator;
+        private readonly IRule4Calculator m_rule4Calculator;
+        private readonly IRule5Calculator m_rule5Calculator;
+        private readonly IRule6Calculator m_rule6Calculator;
+        private readonly IRule7Calculator m_rule7Calculator;
+        public AlternateIDCalculator(IPlanRepository planRepository, IBenefitElectionAlternateIDSelector benefitElectionAlternateIDSelector,
+            IRule1Calculator rule1Calculator,IRule2Calculator rule2Calculator, IRule3Calculator rule3Calculator, IRule4Calculator rule4Calculator,
+            IRule5Calculator rule5Calculator, IRule6Calculator rule6Calculator, IRule7Calculator rule7Calculator)
         {
             m_planRepository = planRepository;
             m_benefitElectionAlternateIDSelector = benefitElectionAlternateIDSelector;
+            m_rule1Calculator = rule1Calculator;
+            m_rule2Calculator = rule2Calculator;
+            m_rule3Calculator = rule3Calculator;
+            m_rule4Calculator = rule4Calculator;
+            m_rule5Calculator = rule5Calculator;
+            m_rule6Calculator = rule6Calculator;
+            m_rule7Calculator = rule7Calculator;
         }
 
         public List<UserAlternateID> GetAlternateID(List<CoveredUser> coveredUsers, DateTime effectiveDate, int ruleID, int planTypeID, int parentUserID, AlternateIDTypes alternateIDType)

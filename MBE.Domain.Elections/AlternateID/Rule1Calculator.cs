@@ -29,7 +29,7 @@ namespace MBE.Domain.Elections.AlternateID
         {
             var userAlternateID = new UserAlternateID() { UserID = userID };
             var election = GetElectionAsOfEffectiveDateOrDayBeforeEffectiveDate(benefitElectionAlternateIDs, userID, effectiveDate);
-            if (election != null) return userAlternateID;
+            if (election != null) userAlternateID.AlternateID = election.AlternateID;
             return userAlternateID;
         }
     }

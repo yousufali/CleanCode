@@ -63,6 +63,9 @@
     <Compile Include="TierAfterTaxAndImputedIncomeSelectorTests.fs" />
     <Compile Include="LifeImputedIncomeCalculatorCoverageTests.fs" />
     <Compile Include="LifeImputedIncomeCostCalculatorTests.fs" />
+    <Compile Include="AlternateIDRule1Tests.fs" />
+    <Compile Include="AlternateIDRule2Tests.fs" />
+    <Compile Include="AlternateIDRule3Tests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">

@@ -11,10 +11,10 @@ namespace MBE.Domain.Elections.AlternateID
         public BenefitElectionAlternateID GetElectionAsOfEffectiveDateOrDayBeforeEffectiveDate(List<BenefitElectionAlternateID> benefitElectionAlternateIDs, 
                                                                                             int userID, DateTime effectiveDate)
         {
-            var benefitElectionAsOfEffectiveDate = benefitElectionAlternateIDs.FirstOrDefault(a => a.BenefitStartDate <= effectiveDate && a.BenefitEndDate >= effectiveDate);
+            var benefitElectionAsOfEffectiveDate = benefitElectionAlternateIDs.FirstOrDefault(a => a.BenefitStartDate <= effectiveDate && a.BenefitEndDate >= effectiveDate && a.UserID == userID);
             if (benefitElectionAsOfEffectiveDate != null) return benefitElectionAsOfEffectiveDate;
             var dayBeforeEffectiveDate = effectiveDate.AddDays(-1);
-            var benefitElectionAsOfDayBeforeEffectiveDate = benefitElectionAlternateIDs.FirstOrDefault(a => a.BenefitStartDate <= dayBeforeEffectiveDate && a.BenefitEndDate >= dayBeforeEffectiveDate);
+            var benefitElectionAsOfDayBeforeEffectiveDate = benefitElectionAlternateIDs.FirstOrDefault(a => a.UserID == userID && a.BenefitStartDate <= dayBeforeEffectiveDate && a.BenefitEndDate >= dayBeforeEffectiveDate);
             return benefitElectionAsOfDayBeforeEffectiveDate;
         }
     }

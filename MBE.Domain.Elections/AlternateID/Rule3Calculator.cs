@@ -41,7 +41,7 @@ namespace MBE.Domain.Elections.AlternateID
         }
         private bool HasDayBeforeElectionAlternateID(BenefitElectionAlternateID benefitElectionAlternateID)
         {
-            return ((benefitElectionAlternateID != null) && String.IsNullOrEmpty(benefitElectionAlternateID.AlternateID));
+            return ((benefitElectionAlternateID != null) && !String.IsNullOrEmpty(benefitElectionAlternateID.AlternateID));
         }
 
         private string CalculateAlternateID(List<BenefitElectionAlternateID> benefitElectionAlternateIDs, CoveredUser coveredUser, DateTime effectiveDate)
