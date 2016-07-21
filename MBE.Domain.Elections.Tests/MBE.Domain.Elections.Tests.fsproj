@@ -70,6 +70,8 @@
     <Compile Include="AltermateIDRule5Tests.fs" />
     <Compile Include="AlternateIDRule6Tests.fs" />
     <Compile Include="AlternateIDRule7Tests.fs" />
+    <Compile Include="AgeBandedPremiumOverrideCalculator.fs" />
+    <Compile Include="NonAgeBandedPremiumOverrideCalculator.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">

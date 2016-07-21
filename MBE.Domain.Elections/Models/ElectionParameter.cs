@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MBE.Domain.Elections.Models
 {
@@ -11,144 +8,135 @@ namespace MBE.Domain.Elections.Models
         public int PlanTypeID { get; private set; }
         public int PlanID { get; private set; }
         public bool EOIRequired { get; private set; }
-        public TierAmountFields ElectionAmount { get; private set; }
-        public TierAmountFields EoiElectionAmount { get; private set; }
-        public string Pcp { get; private set; }
         public int UserID { get; private set; }
-        public List<int> DependentUserID { get; private set; }
         public int ClientID { get; private set; }
         public DateTime EffectiveDate { get; private set; }
         public int SavedUserID { get; private set; }
-        public bool PcpSeen { get; private set; }
-        public string Pcp2 { get; private set; }
-        public bool Pcp2Seen { get; private set; }
+        public TierAmountFields ElectionAmount { get; private set; }
+        public TierAmountFields EoiElectionAmount { get; private set; }        
+        public List<CoveredUser> CoveredUsers { get; private set; }
+
+       
 
         public class Builder
         {
-            private int planTypeID;
-            private int planID;
-            private bool eoiRequired;
-
-            private string pcp;
-            private int userID;
-            private List<int> dependentUserID;
-            private int clientID;
-            private DateTime effectiveDate;
-            private int savedUserID;
-            private bool pcpSeen;
-            private string pcp2;
-            private bool pcp2Seen;
-            private TierAmountFields electionAmount;
-            private TierAmountFields eoiElectionAmount;
+            private int m_planTypeID;
+            private int m_planID;
+            private bool m_eoiRequired;
+            private int m_userID;
+            private int m_clientID;
+            private DateTime m_effectiveDate;
+            private int m_savedUserID;
+            private TierAmountFields m_electionAmount;
+            private TierAmountFields m_eoiElectionAmount;
+            private List<CoveredUser> m_coveredUsers;
             public Builder()
             {
-                electionAmount = new TierAmountFields();
-                eoiElectionAmount = new TierAmountFields();
-                dependentUserID = new List<int>();
+                m_electionAmount = new TierAmountFields();
+                m_eoiElectionAmount = new TierAmountFields();
+
             }
-            public Builder WithPlanTypeID(int value) { planTypeID = value; return this; }
-            public Builder WithPlanID(int value) { planID = value; return this; }
-            public Builder WithEoiRequired(bool value) { eoiRequired = value; return this; }
-            public Builder WithPcp(string value) { pcp = value; return this; }
-            public Builder WithUserID(int value) { userID = value; return this; }
-            public Builder AddCoveredDependent(int value) { this.dependentUserID.Add(value); return this; }
-            public Builder WithClientID(int value) { clientID = value; return this; }
-            public Builder WithEffectiveDate(DateTime value) { effectiveDate = value; return this; }
-            public Builder WithSavedUserID(int value) { savedUserID = value; return this; }
-            public Builder WithPcpSeen(bool value) { pcpSeen = value; return this; }
-            public Builder WithPcp2(string value) { pcp2 = value; return this; }
-            public Builder WithPcp2Seen(bool value) { pcp2Seen = value; return this; }
+            public Builder WithPlanTypeID(int value) { m_planTypeID = value; return this; }
+            public Builder WithPlanID(int value) { m_planID = value; return this; }
+            public Builder WithEoiRequired(bool value) { m_eoiRequired = value; return this; }
+            public Builder WithUserID(int value) { m_userID = value; return this; }
+            public Builder WithClientID(int value) { m_clientID = value; return this; }
+            public Builder WithEffectiveDate(DateTime value) { m_effectiveDate = value; return this; }
+            public Builder WithSavedUserID(int value) { m_savedUserID = value; return this; }
+
             public Builder WithTierID(int value)
             {
-                if (eoiRequired)
+                if (m_eoiRequired)
                 {
-                    eoiElectionAmount.TierID = value;
+                    m_eoiElectionAmount.TierID = value;
                 }
                 else
                 {
-                    electionAmount.TierID = value;
+                    m_electionAmount.TierID = value;
                 }
                 return this;
             }
             public Builder WithEmployeeContribution(decimal value)
             {
-                if (eoiRequired)
+                if (m_eoiRequired)
                 {
-                    eoiElectionAmount.EmployeeContribution = value;
+                    m_eoiElectionAmount.EmployeeContribution = value;
                 }
                 else
                 {
-                    electionAmount.EmployeeContribution = value;
+                    m_electionAmount.EmployeeContribution = value;
                 }
                 return this;
             }
 
             public Builder WithEmployerContribution(decimal value)
             {
-                if (eoiRequired)
+                if (m_eoiRequired)
                 {
-                    eoiElectionAmount.EmployerContribution = value;
+                    m_eoiElectionAmount.EmployerContribution = value;
                 }
                 else
                 {
-                    electionAmount.EmployerContribution = value;
+                    m_electionAmount.EmployerContribution = value;
                 }
                 return this;
             }
             public Builder WithPerPayCheckDeduction(decimal value)
             {
-                if (eoiRequired)
+                if (m_eoiRequired)
                 {
-                    eoiElectionAmount.PerPayCheckDeduction = value;
+                    m_eoiElectionAmount.PerPayCheckDeduction = value;
                 }
                 else
                 {
-                    electionAmount.PerPayCheckDeduction = value;
+                    m_electionAmount.PerPayCheckDeduction = value;
                 }
                 return this;
             }
             public Builder WithCoverageAmount(decimal value)
             {
-                if (eoiRequired)
+                if (m_eoiRequired)
                 {
-                    eoiElectionAmount.CoverageAmount = value;
+                    m_eoiElectionAmount.CoverageAmount = value;
                 }
                 else
                 {
-                    electionAmount.CoverageAmount = value;
+                    m_electionAmount.CoverageAmount = value;
                 }
                 return this;
             }
             public Builder WithBenefitAmount(decimal value)
             {
-                if (eoiRequired)
+                if (m_eoiRequired)
                 {
-                    eoiElectionAmount.BenefitAmount = value;
+                    m_eoiElectionAmount.BenefitAmount = value;
                 }
                 else
                 {
-                    electionAmount.BenefitAmount = value;
+                    m_electionAmount.BenefitAmount = value;
                 }
+                return this;
+            }
+            public Builder WithCoveredUsers (List<CoveredUser> coveredUsers )
+            {
+                m_coveredUsers = coveredUsers;
                 return this;
             }
             public ElectionParameter Build()
             {
                 return new ElectionParameter
                 {
-                    PlanTypeID = planTypeID,
-                    PlanID = planID,
-                    EOIRequired = eoiRequired,
-                    ElectionAmount = electionAmount,
-                    EoiElectionAmount = eoiElectionAmount,
-                    Pcp = pcp,
-                    UserID = userID,
-                    DependentUserID = dependentUserID,
-                    ClientID = clientID,
-                    EffectiveDate = effectiveDate,
-                    SavedUserID = savedUserID,
-                    PcpSeen = pcpSeen,
-                    Pcp2 = pcp2,
-                    Pcp2Seen = pcp2Seen
+                    PlanTypeID = m_planTypeID,
+                    PlanID = m_planID,
+                    EOIRequired = m_eoiRequired,
+                    ElectionAmount = m_electionAmount,
+                    EoiElectionAmount = m_eoiElectionAmount,
+                    UserID = m_userID,
+                    ClientID = m_clientID,
+                    EffectiveDate = m_effectiveDate,
+                    SavedUserID = m_savedUserID,
+                    CoveredUsers =  m_coveredUsers
+                    
                 };
             }
         }

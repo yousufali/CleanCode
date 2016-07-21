@@ -11,7 +11,7 @@ namespace MBE.Domain.Elections
 {
     public interface IAlternateIDCalculator
     {
-        List<UserAlternateID> GetAlternateID(List<CoveredUser> coveredUsers, DateTime effectiveDate, int ruleID, int planTypeID, int parentUserID, AlternateIDTypes alternateIDType);
+        List<UserAlternateID> GetAlternateID(List<CoveredUser> coveredUsers, DateTime effectiveDate, int planID, int planTypeID, int parentUserID, AlternateIDTypes alternateIDType);
     }
 
     public class AlternateIDCalculator : IAlternateIDCalculator
@@ -40,8 +40,10 @@ namespace MBE.Domain.Elections
             m_rule7Calculator = rule7Calculator;
         }
 
-        public List<UserAlternateID> GetAlternateID(List<CoveredUser> coveredUsers, DateTime effectiveDate, int ruleID, int planTypeID, int parentUserID, AlternateIDTypes alternateIDType)
+        public List<UserAlternateID> GetAlternateID(List<CoveredUser> coveredUsers, DateTime effectiveDate, int planID, int planTypeID, int parentUserID, AlternateIDTypes alternateIDType)
         {
+            var plan = m_planRepository.SelectClientBenefitPlan(planID);
+            var ruleID = GetRuleID(plan, alternateIDType);
             var benefitElectionAlternateIDs = m_benefitElectionAlternateIDSelector.SelectBenefitElectionAlternateID(planTypeID, parentUserID, alternateIDType);
             if (ruleID == 1)
             {
@@ -73,6 +75,18 @@ namespace MBE.Domain.Elections
             }
             return GetAlternateIDForNoRule(coveredUsers);
 
+        }
+
+        public int GetRuleID(ClientBenefitPlan plan, AlternateIDTypes alternateIDType)
+        {
+            if (alternateIDType == AlternateIDTypes.Type1)
+            {
+                return plan.AlternateIDRuleID;
+            }
+            else
+            {
+                return plan.AlternateIDRuleID2;
+            }
         }
 
         private List<UserAlternateID> GetAlternateIDForNoRule(List<CoveredUser> coveredUsers)

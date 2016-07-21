@@ -1,40 +1,46 @@
 ﻿using System.Collections.Generic;
+using MBE.Domain.Elections.DataAccess;
 using MBE.Domain.Elections.Models;
 
 namespace MBE.Domain.Elections
 {
     public interface IBenefitElectionAdminFeeCalculator
     {
-        List<BenefitElectionAdminFee> GetBenefitElectionAdminFees(SelectedPlanAndTier setupData, TierAmountFields tierAmountFields);
+        List<BenefitElectionAdminFee> GetBenefitElectionAdminFees(ElectionData electionData);
     }
 
     public class BenefitElectionAdminFeeCalculator : IBenefitElectionAdminFeeCalculator
     {
-        private IPremiumOverrideCalculator m_premiumOverrideCalculator;
-        public BenefitElectionAdminFeeCalculator(IPremiumOverrideCalculator premiumOverrideCalculator)
+        private readonly IBasicPremiumOverrideCalculator m_premiumOverrideCalculator;
+        private readonly IAdminFeeRepository m_adminFeeRepository;
+        private ElectionData m_electionData;
+        public BenefitElectionAdminFeeCalculator(IBasicPremiumOverrideCalculator premiumOverrideCalculator, IAdminFeeRepository adminFeeRepository)
         {
             m_premiumOverrideCalculator = premiumOverrideCalculator;
+            m_adminFeeRepository = adminFeeRepository;
         }
 
-        public List<BenefitElectionAdminFee> GetBenefitElectionAdminFees(SelectedPlanAndTier setupData, TierAmountFields tierAmountFields)
+        public List<BenefitElectionAdminFee> GetBenefitElectionAdminFees(ElectionData electionData)
         {
-            var premiumOverride = m_premiumOverrideCalculator.GetPremiumOverride(tierAmountFields, setupData);
+            m_electionData = electionData;
+            var premiumOverride = m_premiumOverrideCalculator.GetPremiumOverride(electionData);
+            var adminFees = m_adminFeeRepository.SelectAdminFees(electionData.PlanID, electionData.TierID);
             var benefitElectionAdminFees = new List<BenefitElectionAdminFee>();
-            foreach(AdminFee adminFee in setupData.AdminFees)
+            foreach(AdminFee adminFee in adminFees)
             {
                 if (adminFee.AdminFeeCalculationTypeID == (int)AdminFeeCalculationType.FlatFee)
                 {
-                    benefitElectionAdminFees.Add(GetFlatBenefitElectionAdminFee(adminFee, premiumOverride));
+                    benefitElectionAdminFees.Add(GetFlatBenefitElectionAdminFee(adminFee));
                 }
                 else
                 {
-                    benefitElectionAdminFees.Add(GetNonFlatBenefitElectionAdminFee(adminFee, tierAmountFields, premiumOverride));
+                    benefitElectionAdminFees.Add(GetNonFlatBenefitElectionAdminFee(adminFee, premiumOverride));
                 }
             }
             return benefitElectionAdminFees;
         }
 
-        private BenefitElectionAdminFee GetFlatBenefitElectionAdminFee(AdminFee adminFee, decimal premiumOverride)
+        private BenefitElectionAdminFee GetFlatBenefitElectionAdminFee(AdminFee adminFee)
         {
             var benefitElectionAdminFee = InitializeBenefitElectionAdminFee(adminFee);
             benefitElectionAdminFee.EmployeeMonthlyCost = GetEmployeeCostAdminFee(adminFee, adminFee.Fee);
@@ -44,12 +50,12 @@ namespace MBE.Domain.Elections
             return benefitElectionAdminFee;
         }
 
-        private BenefitElectionAdminFee GetNonFlatBenefitElectionAdminFee(AdminFee adminFee, TierAmountFields tierAmountFields, decimal premiumOverride)
+        private BenefitElectionAdminFee GetNonFlatBenefitElectionAdminFee(AdminFee adminFee, decimal premiumOverride)
         {
             var benefitElectionAdminFee = InitializeBenefitElectionAdminFee(adminFee);
-            benefitElectionAdminFee.EmployeeMonthlyCost = GetEmployeeCostAdminFee(adminFee, CalculatePercentageAdminFee(adminFee.Fee, tierAmountFields.EmployeeContribution));
-            benefitElectionAdminFee.EmployerMonthlyCost = GetEmployerCostAdminFee(adminFee, CalculatePercentageAdminFee(adminFee.Fee, tierAmountFields.EmployerContribution));
-            benefitElectionAdminFee.Premium = GetPremiumAdminFee(adminFee, CalculatePercentageAdminFee(adminFee.Fee, GetPremium(tierAmountFields)));
+            benefitElectionAdminFee.EmployeeMonthlyCost = GetEmployeeCostAdminFee(adminFee, CalculatePercentageAdminFee(adminFee.Fee, m_electionData.BasicEmployeeMonthlyCost));
+            benefitElectionAdminFee.EmployerMonthlyCost = GetEmployerCostAdminFee(adminFee, CalculatePercentageAdminFee(adminFee.Fee, m_electionData.BasicEmployerMonthlyCost));
+            benefitElectionAdminFee.Premium = GetPremiumAdminFee(adminFee, CalculatePercentageAdminFee(adminFee.Fee, GetPremium()));
             benefitElectionAdminFee.PremiumOverride = GetPremiumOverrideAdminFee(adminFee, CalculatePercentageAdminFee(adminFee.Fee, premiumOverride));
             return benefitElectionAdminFee;
         }
@@ -67,9 +73,9 @@ namespace MBE.Domain.Elections
             };
         }
 
-        private decimal GetPremium(TierAmountFields tierAmountFields)
+        private decimal GetPremium()
         {
-            return tierAmountFields.EmployeeContribution + tierAmountFields.EmployerContribution;
+            return m_electionData.BasicEmployeeMonthlyCost + m_electionData.BasicEmployerMonthlyCost;
         }
 
         private decimal CalculatePercentageAdminFee(decimal fee, decimal amount)

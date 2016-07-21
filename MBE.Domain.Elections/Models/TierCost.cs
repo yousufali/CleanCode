@@ -26,5 +26,6 @@ namespace MBE.Domain.Elections.Models
     }
     public class TierCostsAgeBand : TierCost
     {
+        public int TierCostsAgeBandID { get; set; }
     }
 }

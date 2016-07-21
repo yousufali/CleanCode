@@ -12,5 +12,8 @@ namespace MBE.Domain.Elections.Models
         public bool AgeBanding { get; set; }
         public int AlternateIDRuleID { get; set; }
         public int AlternateIDRuleID2 { get; set; }
+        public DateTime EffectiveDate { get; set; }
+        public DateTime TerminationDate { get; set; }
+        public bool WaivePlan { get; set; }
     }
 }
