@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using MBE.Domain.Elections.AlternateID;
 using MBE.Domain.Elections.DataAccess;
 using MBE.Domain.Elections.Models;
+using MBE.Domain.Elections.Premium;
+using MBE.Domain.Elections.PremiumOverride;
+using MBE.Domain.Elections.User;
 
 namespace MBE.Domain.Elections
 {
@@ -14,16 +17,24 @@ namespace MBE.Domain.Elections
         private readonly IAlternateIDCalculator m_alternateIDCalculator;
         private ElectionParameter m_electionParameter;
         private List<UserAlternateID> m_userAlternateIDs;
-        private IUserRepository m_userRepository;
-        private IPlanRepository m_planRepository;
-        private IElectionStartDateCalculator m_electionStartDateCalculator;
+        private readonly IUserRepository m_userRepository;
+        private readonly IPlanRepository m_planRepository;
+        private readonly IElectionStartDateCalculator m_electionStartDateCalculator;
+        private readonly IPremiumCalculator m_premiumCalculator;
+        private IPremiumOverrideCalculator m_premiumOverrideCalculator;
+        private IUserRateDiscriminatorCalculator m_userRateDiscriminatorCalculator;
+
         public ElectionSaver(IAlternateIDCalculator alternateIDCalculator, IUserRepository userRepository, 
-            IPlanRepository planRepository, IElectionStartDateCalculator electionStartDateCalculator)
+            IPlanRepository planRepository, IElectionStartDateCalculator electionStartDateCalculator, IPremiumCalculator premiumCalculator, 
+            IPremiumOverrideCalculator premiumOverrideCalculator, IUserRateDiscriminatorCalculator userRateDiscriminatorCalculator)
         {
             m_alternateIDCalculator = alternateIDCalculator;
             m_userRepository = userRepository;
             m_planRepository = planRepository;
             m_electionStartDateCalculator = electionStartDateCalculator;
+            m_premiumCalculator = premiumCalculator;
+            m_premiumOverrideCalculator = premiumOverrideCalculator;
+            m_userRateDiscriminatorCalculator = userRateDiscriminatorCalculator;
         }
         public bool Save(ElectionParameter electionParameter)
         {
@@ -36,6 +47,7 @@ namespace MBE.Domain.Elections
             m_electionParameter = electionParameter;
             var plan = m_planRepository.SelectClientBenefitPlan(electionParameter.PlanID);
             var benefitElections = new List<BenefitElectionNonFsaRecord>();
+            var nonEoiElectionData = GetNonEoiElectionData(electionParameter);
             foreach (CoveredUser coveredUser in electionParameter.CoveredUsers)
             {
                 var be = new BenefitElectionNonFsaRecord();
@@ -49,14 +61,14 @@ namespace MBE.Domain.Elections
                 be.TierID = electionParameter.ElectionAmount.TierID;
                 be.BenefitStartDate = electionParameter.EffectiveDate;
                 be.BenefitEndDate = plan.TerminationDate;
-                be.ElectionStartDate = m_electionStartDateCalculator.GetElectionStartDate(electionParameter.UserID,
-                    electionParameter.PlanTypeID, electionParameter.EffectiveDate);
-                //be.Premium = premium #TODO
-                //be.PremiumOverride = PremiumOverrideCalculator#TODO
+                be.ElectionStartDate = m_electionStartDateCalculator.GetElectionStartDate(nonEoiElectionData);
+                be.Premium = m_premiumCalculator.GetPremium(nonEoiElectionData);
+                be.PremiumOverride = m_premiumOverrideCalculator.GetPremiumOverride(nonEoiElectionData);
                 be.Contribution = electionParameter.ElectionAmount.EmployeeContribution;
                 be.Coverage = electionParameter.ElectionAmount.CoverageAmount;
-                //be.RateQualifier = uerRateDiscriminator#TODO
-                //be.BenefitPlanYear = benefitPlanYear#TODO
+                be.RateQualifier = m_userRateDiscriminatorCalculator.GetRateDiscriminator(electionParameter.UserID,
+                    electionParameter.PlanTypeID);
+                be.BenefitPlanYear = plan.EffectiveDate.Year.ToString();
                 //be.ImputedIncomeMonthly = imputedIncomeMonthly#TODO
                 //be.ImputedIncomePerPay = imputedIncomePerPay#TODO
                 //be.AfterTax = afterTax #TODO
@@ -85,6 +97,23 @@ namespace MBE.Domain.Elections
                 benefitElections.Add(be);
             }
             return benefitElections;
+        }
+
+        private ElectionData GetNonEoiElectionData(ElectionParameter electionParameter)
+        {
+            return new ElectionData()
+            {
+                ParentUserID = electionParameter.UserID,
+                EffectiveDate = electionParameter.EffectiveDate,
+                PlanTypeID = electionParameter.PlanTypeID,
+                PlanID = electionParameter.PlanID,
+                TierID = electionParameter.ElectionAmount.TierID,
+                CoveredUsers = electionParameter.CoveredUsers,
+                BasicEmployeeMonthlyCost = electionParameter.ElectionAmount.EmployeeContribution,
+                BasicEmployerMonthlyCost = electionParameter.ElectionAmount.EmployerContribution,
+                BasicPremiumCost = electionParameter.ElectionAmount.EmployeeContribution + electionParameter.ElectionAmount.EmployerContribution,
+                Coverage = electionParameter.ElectionAmount.CoverageAmount
+            };
         }
 
         private string GetUserAlternateID1(int userID)
@@ -139,11 +168,11 @@ namespace MBE.Domain.Elections
         public DateTime BenefitStartDate { get; set; }
         public DateTime BenefitEndDate { get; set; }
         public DateTime ElectionStartDate { get; set; }
-        public DateTime Premium { get; set; }
-        public DateTime PremiumOverride { get; set; }
-        public Decimal Contribution { get; set; }
+        public decimal Premium { get; set; }
+        public decimal PremiumOverride { get; set; }
+        public decimal Contribution { get; set; }
         public decimal Coverage { get; set; }
-        public string RateQualifier { get; set; }
+        public int RateQualifier { get; set; }
         public string BenefitPlanYear { get; set; }
         public decimal ImputedIncomeMonthly { get; set; }
         public decimal ImputedIncomePerPay { get; set; }

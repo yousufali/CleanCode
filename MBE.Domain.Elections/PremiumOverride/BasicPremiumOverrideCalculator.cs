@@ -1,8 +1,7 @@
 ﻿using MBE.Domain.Elections.DataAccess;
 using MBE.Domain.Elections.Models;
-using MBE.Domain.Elections.PremiumOverride;
 
-namespace MBE.Domain.Elections
+namespace MBE.Domain.Elections.PremiumOverride
 {
     public interface IBasicPremiumOverrideCalculator
     {

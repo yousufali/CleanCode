@@ -16,6 +16,7 @@ namespace MBE.Domain.Elections.Models
         public DateTime BenefitEndDate { get; set; }
         public DateTime ElectionStartDate { get; set; }
         public string AlternateID1 { get; set; }
-        public string AlternateID2 { get; set; }        
+        public string AlternateID2 { get; set; }
+        public decimal Coverage { get; set; }
     }
 }

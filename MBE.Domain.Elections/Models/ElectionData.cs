@@ -5,6 +5,7 @@ namespace MBE.Domain.Elections.Models
 {
     public class ElectionData
     {
+        public int ClientID { get; set; }
         public int ParentUserID { get; set; }
         public DateTime EffectiveDate { get; set; }
         public int PlanTypeID { get; set; }

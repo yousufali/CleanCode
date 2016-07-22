@@ -1,5 +1,6 @@
 ﻿namespace MBE.Domain.Elections.Tests
 open MBE.Domain.Elections
+open MBE.Domain.Elections.PremiumOverride
 open MBE.Domain.Elections.Models
 open System
 open Xunit

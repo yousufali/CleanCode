@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MBE.Domain.Elections.Models;
 using MBE.Domain.Elections.DataAccess;
 
@@ -10,22 +7,27 @@ namespace MBE.Domain.Elections
 {
     public interface ILifeImputedIncomeCalculator
     {
-        decimal GetImputedIncomeMonthly(SelectedPlanAndTier setupData);
+        decimal GetImputedIncomeMonthly(ElectionData electionData);
     }
 
-    public class LifeImputedIncomeCalculator
+    public class LifeImputedIncomeCalculator : ILifeImputedIncomeCalculator
     {
-        private ILifeImputedIncomeCoverageCalculator m_lifeImputedIncomeCoverageCalculator;
-
-        public LifeImputedIncomeCalculator(ILifeImputedIncomeCoverageCalculator lifeImputedIncomeCoverageCalculator)
+        private readonly ILifeImputedIncomeCoverageCalculator m_lifeImputedIncomeCoverageCalculator;
+        private readonly IUserRepository m_userRepository;
+        private readonly IImputedIncomeCostsRepository m_imputedIncomeCostsRepository;
+        private ElectionData m_electionData;
+        public LifeImputedIncomeCalculator(ILifeImputedIncomeCoverageCalculator lifeImputedIncomeCoverageCalculator, IUserRepository userRepository, IImputedIncomeCostsRepository imputedIncomeCostsRepository)
         {
             m_lifeImputedIncomeCoverageCalculator = lifeImputedIncomeCoverageCalculator;
+            m_userRepository = userRepository;
+            m_imputedIncomeCostsRepository = imputedIncomeCostsRepository;
         }
 
-        public decimal GetImputedIncomeMonthly(SelectedPlanAndTier setupData, DateTime effectiveDate)
+        public decimal GetImputedIncomeMonthly(ElectionData electionData)
         {
-            var coverage = m_lifeImputedIncomeCoverageCalculator.GetImputedIncomeCoverage(setupData.CoverageAmountsForImputedIncome);
-            var imputedIncomeCost = GetImputedIncomeCost(setupData, effectiveDate);
+            m_electionData = electionData;
+            var coverage = m_lifeImputedIncomeCoverageCalculator.GetImputedIncomeCoverage(electionData);
+            var imputedIncomeCost = GetImputedIncomeCost();
             var monthlyCost =  CalculateImputedIncomeMonthlyCostForCoverage(imputedIncomeCost, coverage);
             return monthlyCost;
         }
@@ -35,17 +37,19 @@ namespace MBE.Domain.Elections
             return (coverage / 1000) * imputedIncomeCost.Cost;
         }
 
-        private  ImputedIncomeCost GetImputedIncomeCost(SelectedPlanAndTier setupData, DateTime effectiveDate)
+        private  ImputedIncomeCost GetImputedIncomeCost()
         {
-            var age = GetAgeAsEndOfYear(setupData.User.BirthDate, effectiveDate.Year);
-            var imputedIncomeCost = setupData.ImputedIncomeCosts.FirstOrDefault(a => a.Minage <= age && a.MaxAge >= age);
+            var imputedIncomeCosts = m_imputedIncomeCostsRepository.GetImputedIncomeCosts();
+            var user = m_userRepository.GetUser(m_electionData.ParentUserID);
+            var age = GetAgeAsEndOfYear(user.BirthDate, m_electionData.EffectiveDate.Year);
+            var imputedIncomeCost = imputedIncomeCosts.FirstOrDefault(a => a.Minage <= age && a.MaxAge >= age);
             if (imputedIncomeCost != null) return imputedIncomeCost;
             return new ImputedIncomeCost();
         }
 
         private int GetAgeAsEndOfYear(DateTime birthDate, int toYear)
         {
-            DateTime toDate = DateTime.Parse(String.Format("12/31/{0}", toYear));
+            DateTime toDate = DateTime.Parse($"12/31/{toYear}");
             var age = toYear - birthDate.Year;
             if (birthDate > toDate.AddYears(-age)) age--;
             return age;

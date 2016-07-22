@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using  MBE.Domain.Elections.DataAccess;
+using MBE.Domain.Elections.Models;
 
 namespace MBE.Domain.Elections
 {
     public interface IElectionStartDateCalculator
     {
-        DateTime GetElectionStartDate(int userID, int planTypeID, DateTime effectiveDate);
+        DateTime GetElectionStartDate(ElectionData electionData);
     }
     public class ElectionStartDateCalculator : IElectionStartDateCalculator
     {
@@ -20,16 +21,16 @@ namespace MBE.Domain.Elections
             m_benefitElectionRepository = benefitElectionRepository;
         }
 
-        public DateTime GetElectionStartDate(int userID, int planTypeID, DateTime effectiveDate)
+        public DateTime GetElectionStartDate(ElectionData electionData)
         {
-            var planTypes = new List<int> {planTypeID};
-            var elections = m_benefitElectionRepository.SelectBenefitElections(userID, planTypes);
-            var dayBeforeEffectiveDate = effectiveDate.AddDays(-1);
+            var planTypes = new List<int> {electionData.PlanTypeID};
+            var elections = m_benefitElectionRepository.SelectBenefitElections(electionData.ParentUserID, planTypes);
+            var dayBeforeEffectiveDate = electionData.EffectiveDate.AddDays(-1);
             var electionDayBeforeEffectiveDate =
                 elections.FirstOrDefault(
                     a => a.BenefitStartDate <= dayBeforeEffectiveDate && a.BenefitEndDate >= dayBeforeEffectiveDate);
-            if (electionDayBeforeEffectiveDate == null) return effectiveDate;
-            return !IsPlanWaive(electionDayBeforeEffectiveDate.PlanID) ? electionDayBeforeEffectiveDate.ElectionStartDate : effectiveDate;
+            if (electionDayBeforeEffectiveDate == null) return electionData.EffectiveDate;
+            return !IsPlanWaive(electionDayBeforeEffectiveDate.PlanID) ? electionDayBeforeEffectiveDate.ElectionStartDate : electionData.EffectiveDate;
         }
 
         private bool IsPlanWaive(int planID)

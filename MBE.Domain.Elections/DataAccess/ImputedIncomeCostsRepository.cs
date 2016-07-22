@@ -7,18 +7,15 @@ using MBE.Domain.Elections.Models;
 
 namespace MBE.Domain.Elections.DataAccess
 {
-    public interface ITierCostRepository
+    public interface IImputedIncomeCostsRepository
     {
-        TierCost SelectTierCost(int tierID);
+        List<ImputedIncomeCost> GetImputedIncomeCosts();
     }
-
-    public class TierCostRepository : ITierCostRepository
+    public class ImputedIncomeCostsRepository : IImputedIncomeCostsRepository
     {
-        public TierCost SelectTierCost(int tierID)
+        public List<ImputedIncomeCost> GetImputedIncomeCosts()
         {
             throw new NotImplementedException();
         }
     }
-
-
 }

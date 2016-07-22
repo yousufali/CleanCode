@@ -7,11 +7,15 @@ using MBE.Domain.Elections.Models;
 
 namespace MBE.Domain.Elections.DataAccess
 {
-    public interface ITierRepository
+    public interface ITierAfterTaxAndImputedIncomeRepository
     {
-        List<TierAfterTaxAndImputedIncome> GetTierAfterTaxAmdImputedIncome(int tierID, bool ageBanding);
+        List<TierAfterTaxAndImputedIncome> GetTierAfterTaxAmdImputedIncome(int tierID, int planID);
      }
-    public class TierRepository
+    public class TierAfterTaxAndImputedIncomeRepository : ITierAfterTaxAndImputedIncomeRepository
     {
+        public List<TierAfterTaxAndImputedIncome> GetTierAfterTaxAmdImputedIncome(int tierID, int planID)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

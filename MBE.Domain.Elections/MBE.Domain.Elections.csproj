@@ -55,7 +55,9 @@
     <Compile Include="CreditQuestion\UserCreditAmountCalculator.cs" />
     <Compile Include="DataAccess\AdminFeeRepository.cs" />
     <Compile Include="DataAccess\BenefitElectionRepository.cs" />
+    <Compile Include="DataAccess\ImputedIncomeCostsRepository.cs" />
     <Compile Include="DataAccess\PlanRepository.cs" />
+    <Compile Include="DataAccess\PlanTypeRepository.cs" />
     <Compile Include="DataAccess\TierCostAgeBandRepository.cs" />
     <Compile Include="DataAccess\TierCostRepository.cs" />
     <Compile Include="DataAccess\TierRepository.cs" />
@@ -88,14 +90,20 @@
     <Compile Include="Models\UserBenefitClass.cs" />
     <Compile Include="Models\UserCreditResponse.cs" />
     <Compile Include="NonLifeImputedIncomeCalculator.cs" />
-    <Compile Include="BasicPremiumOverrideCalculator.cs" />
+    <Compile Include="PremiumOverride\BasicPremiumOverrideCalculator.cs" />
     <Compile Include="PremiumOverrideWithAdminFeeCalculator.cs" />
     <Compile Include="PremiumOverride\AgeBandedPremiumOverrideCalculator.cs" />
     <Compile Include="PremiumOverride\NonAgeBandedPremiumOverrideCalculator.cs" />
-    <Compile Include="Premium\AdditionalPremiumCalculator.cs" />
+    <Compile Include="PremiumOverride\PremiumOverrideCalculator.cs" />
+    <Compile Include="Premium\PremiumCalculator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TierAfterTaxAndImputedIncomeSelector.cs" />
     <Compile Include="Tier\BaseTierCalculator.cs" />
+    <Compile Include="User\CoveredDependentSelector.cs" />
+    <Compile Include="User\UserRateDiscriminatorCalculator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ImputedIncome\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

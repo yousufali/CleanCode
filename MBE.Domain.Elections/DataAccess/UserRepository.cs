@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MBE.Domain.Elections.Models;
 
 namespace MBE.Domain.Elections.DataAccess
 {
     public interface IUserRepository
     {
+        Models.User GetUser(int userID);
         List<UserBenefitClass> GetUserBenefitClasses(int userID);
     }
     public class UserRepository : IUserRepository
     {
+        public Models.User GetUser(int userID)
+        {
+            throw new NotImplementedException();
+        }
+
         public List<UserBenefitClass> GetUserBenefitClasses(int userID)
         {
             throw new NotImplementedException();
