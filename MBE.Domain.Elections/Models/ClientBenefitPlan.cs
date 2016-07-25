@@ -15,5 +15,6 @@ namespace MBE.Domain.Elections.Models
         public DateTime EffectiveDate { get; set; }
         public DateTime TerminationDate { get; set; }
         public bool WaivePlan { get; set; }
+        public bool PrePayPlan { get; set; }
     }
 }

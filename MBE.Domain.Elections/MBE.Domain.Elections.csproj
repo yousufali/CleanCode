@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AfterTax\AfterTaxCalculator.cs" />
+    <Compile Include="AfterTax\BasicAfterTaxCalculator.cs" />
     <Compile Include="AlternateIDCalculator.cs" />
     <Compile Include="AlternateID\BenefitElectionAlternateID.cs" />
     <Compile Include="AlternateID\BenefitElectionAlternateIDSelector.cs" />
@@ -56,12 +58,16 @@
     <Compile Include="DataAccess\AdminFeeRepository.cs" />
     <Compile Include="DataAccess\BenefitElectionRepository.cs" />
     <Compile Include="DataAccess\ImputedIncomeCostsRepository.cs" />
+    <Compile Include="DataAccess\PayrollFrequencyRepository.cs" />
+    <Compile Include="DataAccess\PayrollScheduleDetailRepository.cs" />
     <Compile Include="DataAccess\PlanRepository.cs" />
     <Compile Include="DataAccess\PlanTypeRepository.cs" />
     <Compile Include="DataAccess\TierCostAgeBandRepository.cs" />
     <Compile Include="DataAccess\TierCostRepository.cs" />
+    <Compile Include="DataAccess\TierPrePayValueRepository.cs" />
     <Compile Include="DataAccess\TierRepository.cs" />
     <Compile Include="DataAccess\UserCreditResponseRepository.cs" />
+    <Compile Include="DataAccess\UserPrePayAmountPaidRepository.cs" />
     <Compile Include="DataAccess\UserRepository.cs" />
     <Compile Include="ElectionSaver.cs" />
     <Compile Include="ElectionStartDateCalculator.cs" />
@@ -80,6 +86,9 @@
     <Compile Include="Models\ElectionParameter.cs" />
     <Compile Include="Models\ImputedIncomeCost.cs" />
     <Compile Include="Models\ImputedIncomeDateRange.cs" />
+    <Compile Include="Models\PayrollFrequencyPayrollSchedule.cs" />
+    <Compile Include="Models\PayrollScheduleDetail.cs" />
+    <Compile Include="Models\PreviousPlan.cs" />
     <Compile Include="Models\Relation.cs" />
     <Compile Include="Models\SelectedPlanAndTier.cs" />
     <Compile Include="Models\TierAfterTaxAndImputedIncome.cs" />
@@ -90,13 +99,20 @@
     <Compile Include="Models\UserBenefitClass.cs" />
     <Compile Include="Models\UserCreditResponse.cs" />
     <Compile Include="NonLifeImputedIncomeCalculator.cs" />
+    <Compile Include="PayPeriod\EmployeePayPeriodsPerAnnumCalculator.cs" />
+    <Compile Include="PayPeriod\EmployerPayPeriodsPerAnnumCalculator.cs" />
+    <Compile Include="PayPeriod\PayPeriodsPerAnnumCalculator.cs" />
+    <Compile Include="PayPeriod\PayrollFrequencyCalculator.cs" />
     <Compile Include="PremiumOverride\BasicPremiumOverrideCalculator.cs" />
     <Compile Include="PremiumOverrideWithAdminFeeCalculator.cs" />
     <Compile Include="PremiumOverride\AgeBandedPremiumOverrideCalculator.cs" />
     <Compile Include="PremiumOverride\NonAgeBandedPremiumOverrideCalculator.cs" />
     <Compile Include="PremiumOverride\PremiumOverrideCalculator.cs" />
     <Compile Include="Premium\PremiumCalculator.cs" />
+    <Compile Include="PreviousPlan\PreviousPlanCalculator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SummerPrePay\SummerPrePayAfterTaxCalculator.cs" />
+    <Compile Include="SummerPrePay\SummerPrePayEmployeeDeductionCalculator.cs" />
     <Compile Include="TierAfterTaxAndImputedIncomeSelector.cs" />
     <Compile Include="Tier\BaseTierCalculator.cs" />
     <Compile Include="User\CoveredDependentSelector.cs" />

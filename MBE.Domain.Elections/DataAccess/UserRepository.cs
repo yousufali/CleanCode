@@ -8,6 +8,7 @@ namespace MBE.Domain.Elections.DataAccess
     {
         Models.User GetUser(int userID);
         List<UserBenefitClass> GetUserBenefitClasses(int userID);
+        Employee GetEmployee(int userID);
     }
     public class UserRepository : IUserRepository
     {
@@ -17,6 +18,11 @@ namespace MBE.Domain.Elections.DataAccess
         }
 
         public List<UserBenefitClass> GetUserBenefitClasses(int userID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Employee GetEmployee(int userID)
         {
             throw new NotImplementedException();
         }

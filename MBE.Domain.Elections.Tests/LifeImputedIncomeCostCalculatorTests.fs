@@ -15,7 +15,8 @@ module LifeImputedIncomeCostCalculatorTests =
     let getLifeImputedIncomeCoverageCalculator imputedIncomeCoverage = { new ILifeImputedIncomeCoverageCalculator with member this.GetImputedIncomeCoverage(x) = decimal imputedIncomeCoverage }
     let userRepository = { new IUserRepository with 
                                                     member this.GetUser(x) = new User(BirthDate = DateTime.Parse "1/1/1980")
-                                                    member this.GetUserBenefitClasses(x) = null }
+                                                    member this.GetUserBenefitClasses(x) = null
+                                                    member this.GetEmployee(x) = null }
             
     [<Fact>]
     let ``Imputed Income Monthly Cost is 0 when Imputed Income Coverage is 0``() =
@@ -35,6 +36,6 @@ module LifeImputedIncomeCostCalculatorTests =
         let lifeImputedIncomeCoverageCalculator = getLifeImputedIncomeCoverageCalculator 30000
 
         let lifeImputedIncomeCalculator = new LifeImputedIncomeCalculator(lifeImputedIncomeCoverageCalculator, userRepository, imputedIncomeCostsRepository)
-        let actual = lifeImputedIncomeCalculator.GetImputedIncomeMonthly(new ElectionData())
+        let actual = lifeImputedIncomeCalculator.GetImputedIncomeMonthly(new ElectionData(EffectiveDate = DateTime.Parse "1/1/2016"))
         let expected = decimal 1.5
         Assert.Equal(expected, actual)

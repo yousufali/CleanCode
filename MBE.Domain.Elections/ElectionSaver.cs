@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MBE.Domain.Elections.AfterTax;
 using MBE.Domain.Elections.AlternateID;
 using MBE.Domain.Elections.DataAccess;
 using MBE.Domain.Elections.Models;
+using MBE.Domain.Elections.PayPeriod;
 using MBE.Domain.Elections.Premium;
 using MBE.Domain.Elections.PremiumOverride;
+using MBE.Domain.Elections.PreviousPlan;
 using MBE.Domain.Elections.User;
 
 namespace MBE.Domain.Elections
@@ -21,12 +22,16 @@ namespace MBE.Domain.Elections
         private readonly IPlanRepository m_planRepository;
         private readonly IElectionStartDateCalculator m_electionStartDateCalculator;
         private readonly IPremiumCalculator m_premiumCalculator;
-        private IPremiumOverrideCalculator m_premiumOverrideCalculator;
-        private IUserRateDiscriminatorCalculator m_userRateDiscriminatorCalculator;
+        private readonly IPremiumOverrideCalculator m_premiumOverrideCalculator;
+        private readonly IUserRateDiscriminatorCalculator m_userRateDiscriminatorCalculator;
+        private readonly IImputedIncomeCalculator m_imputedIncomeCalculator;
+        private readonly IPayPeriodsPerAnumCalculator m_payPeriodsPerAnumCalculator;
+        private readonly IAfterTaxCalculator m_afterTaxCalculator;
+        private readonly IPreviousPlanCalculator m_previousPlanCalculator;
 
         public ElectionSaver(IAlternateIDCalculator alternateIDCalculator, IUserRepository userRepository, 
             IPlanRepository planRepository, IElectionStartDateCalculator electionStartDateCalculator, IPremiumCalculator premiumCalculator, 
-            IPremiumOverrideCalculator premiumOverrideCalculator, IUserRateDiscriminatorCalculator userRateDiscriminatorCalculator)
+            IPremiumOverrideCalculator premiumOverrideCalculator, IUserRateDiscriminatorCalculator userRateDiscriminatorCalculator, IImputedIncomeCalculator imputedIncomeCalculator, IPayPeriodsPerAnumCalculator payPeriodsPerAnumCalculator, IAfterTaxCalculator afterTaxCalculator, IPremiumCalculator rPremiumCalculator, IPreviousPlanCalculator previousPlanCalculator)
         {
             m_alternateIDCalculator = alternateIDCalculator;
             m_userRepository = userRepository;
@@ -35,6 +40,10 @@ namespace MBE.Domain.Elections
             m_premiumCalculator = premiumCalculator;
             m_premiumOverrideCalculator = premiumOverrideCalculator;
             m_userRateDiscriminatorCalculator = userRateDiscriminatorCalculator;
+            m_imputedIncomeCalculator = imputedIncomeCalculator;
+            m_payPeriodsPerAnumCalculator = payPeriodsPerAnumCalculator;
+            m_afterTaxCalculator = afterTaxCalculator;
+            m_previousPlanCalculator = previousPlanCalculator;
         }
         public bool Save(ElectionParameter electionParameter)
         {
@@ -48,6 +57,14 @@ namespace MBE.Domain.Elections
             var plan = m_planRepository.SelectClientBenefitPlan(electionParameter.PlanID);
             var benefitElections = new List<BenefitElectionNonFsaRecord>();
             var nonEoiElectionData = GetNonEoiElectionData(electionParameter);
+            var employeePayPeriodsPerAnnum =
+                m_payPeriodsPerAnumCalculator.GetEmployeePayPeriodsPerAnnum(electionParameter.UserID,
+                    electionParameter.PlanTypeID);
+            var employerPayPeriodsPerAnnum =
+                m_payPeriodsPerAnumCalculator.GetEmployerPayPeriodsPerAnnum(electionParameter.UserID,
+                    electionParameter.PlanTypeID);
+            var previousPlan = m_previousPlanCalculator.SelectPreviousPlan(nonEoiElectionData);
+            var employee = m_userRepository.GetEmployee(electionParameter.UserID);
             foreach (CoveredUser coveredUser in electionParameter.CoveredUsers)
             {
                 var be = new BenefitElectionNonFsaRecord();
@@ -69,29 +86,30 @@ namespace MBE.Domain.Elections
                 be.RateQualifier = m_userRateDiscriminatorCalculator.GetRateDiscriminator(electionParameter.UserID,
                     electionParameter.PlanTypeID);
                 be.BenefitPlanYear = plan.EffectiveDate.Year.ToString();
-                //be.ImputedIncomeMonthly = imputedIncomeMonthly#TODO
-                //be.ImputedIncomePerPay = imputedIncomePerPay#TODO
-                //be.AfterTax = afterTax #TODO
-                //be.AfterTaxDeductionPerPay = AfterTaxDeductionPerPay #TODO
+                be.ImputedIncomeMonthly = m_imputedIncomeCalculator.GetImputedIncomeMonthly(nonEoiElectionData);
+                be.ImputedIncomePerPay = be.ImputedIncomePerPay/employeePayPeriodsPerAnnum;
+                be.AfterTax = m_afterTaxCalculator.GetAfterTax(nonEoiElectionData);
+                be.AfterTaxDeductionPerPay = be.AfterTax/employeePayPeriodsPerAnnum;
                 be.EOIRequired = electionParameter.EOIRequired;
                 be.EOICoverage = electionParameter.EoiElectionAmount.CoverageAmount;
                 be.EOIPlan = electionParameter.PlanID.ToString();
                 be.EOITier = electionParameter.ElectionAmount.TierID.ToString();
                 be.EOIDefaultContribution = electionParameter.EoiElectionAmount.EmployeeContribution;
-                //be.EOIDefaultPremium =  Premium #TODO
+                be.EOIDefaultPremium = m_premiumCalculator.GetPremium(nonEoiElectionData);
                 be.EOIDefaultCoverage = electionParameter.EoiElectionAmount.CoverageAmount;
                 be.PCP1 = coveredUser.Pcp;
                 be.PCP2 = coveredUser.Pcp2;
                 be.PCP1Seen = coveredUser.PcpSeen;
                 be.PCP2Seen = coveredUser.Pcp2Seen;
-                //be.PreviousPlanID = previousPlanID #TODO
-                //be.PreviousPlanNetwork = previousPlanNetwork  #TODO
+                be.PreviousPlanID = previousPlan.PreviousPlanID;
+                be.PreviousPlanNetwork = previousPlan.PreviousPlanNetwork;
                 be.ClientDeductionPerPay = electionParameter.ElectionAmount.PerPayCheckDeduction;
                 be.SavedUserID = electionParameter.UserID;
-                //be.BenefitElectionPayrollScheduleID = payrollScheduleID #TODO
-                //be.PayrollExportUniqueID = PayrollExportUniqueID #TODO
+                be.BenefitElectionPayrollScheduleID = employee.PayrollScheduleID;
+                be.PayrollExportUniqueID = employee.PayrollExportUniqueID;
                 be.EmployerMonthlyContribution = electionParameter.ElectionAmount.EmployerContribution;
-                //be.EmployerPerPayContribution = employerPerPayContribution #TODO
+                be.EmployerPerPayContribution = electionParameter.ElectionAmount.EmployerContribution*12/
+                                                employerPayPeriodsPerAnnum;
                 be.BenefitAmount = electionParameter.ElectionAmount.BenefitAmount;
                 be.EoiBenefitAmount = electionParameter.EoiElectionAmount.BenefitAmount;
                 benefitElections.Add(be);

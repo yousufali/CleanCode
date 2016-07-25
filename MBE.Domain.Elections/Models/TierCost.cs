@@ -23,9 +23,11 @@ namespace MBE.Domain.Elections.Models
         public decimal PremiumOverride { get; set; }
         public bool FlatRate { get; set; }
         public decimal Per { get; set; }
+        public decimal AfterTax { get; set; }
     }
     public class TierCostsAgeBand : TierCost
     {
         public int TierCostsAgeBandID { get; set; }
+        public decimal AfterTax { get; set; }
     }
 }

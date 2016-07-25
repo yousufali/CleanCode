@@ -18,5 +18,12 @@ namespace MBE.Domain.Elections.Models
         public string AlternateID1 { get; set; }
         public string AlternateID2 { get; set; }
         public decimal Coverage { get; set; }
+        public int TierID { get; set; }
+        public DateTime DateCreated { get; set; }
+        public DateTime DateUpdated { get; set; }
+        public decimal ClientDeductionPerPay { get; set; }
+        public decimal AfterTax { get; set; }
+        public int PreviousPlanID { get; set; }
+        public string PreviousPlanNetwork { get; set; }
     }
 }

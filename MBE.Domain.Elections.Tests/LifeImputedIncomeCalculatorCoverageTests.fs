@@ -31,8 +31,10 @@ module LifeImputedIncomeCalculatorCoverageTests =
 
     [<Fact>]
     let ``Total Coverage greater than 50000 Test``() =
-        let benefitElectionRepository = [| new BenefitElection(UserID = 1500, ParentUserID = 1500, PlanTypeID = 16, BenefitStartDate = dtp "1/1/2016", BenefitEndDate = dtp "12/31/2099", Coverage = decimal 10000);
-                                           new BenefitElection(UserID = 1500, ParentUserID = 1500, PlanTypeID = 32, BenefitStartDate = dtp "1/1/2016", BenefitEndDate = dtp "12/31/2099", Coverage = decimal 10000) |]
+        let benefitElectionRepository = [| new BenefitElection(UserID = 1500, ParentUserID = 1500, PlanTypeID = 16, BenefitStartDate = dtp "1/1/2016", 
+                                                                        BenefitEndDate = dtp "12/31/2099", Coverage = decimal 35000);
+                                           new BenefitElection(UserID = 1500, ParentUserID = 1500, PlanTypeID = 32, BenefitStartDate = dtp "1/1/2016", 
+                                                                        BenefitEndDate = dtp "12/31/2099", Coverage = decimal 35000) |]
                                             |> List |> getBenefitElectionRepository
         let planTypeRepository = [| new ClientPlanOrder(PlanTypeID = 16, LifeImputedIncomeHolder = true, IncludeInLifeImputedIncome = true);
                                     new ClientPlanOrder(PlanTypeID = 32, LifeImputedIncomeHolder = true, IncludeInLifeImputedIncome = true)  |]
